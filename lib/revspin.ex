@@ -5,6 +5,6 @@ defmodule Revspin do
 
   def start do
     html = Client.get_blades_page()
-    Parser.parse_page(html)
+    Parser.parse_blades_page(html)
   end
 end
