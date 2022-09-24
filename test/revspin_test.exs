@@ -29,4 +29,9 @@ defmodule RevspinTest do
     assert Enum.count(tcore_blades) == 5
     assert %{link: "blade/tcore-a100.html", name: "A100"} = Enum.at(tcore_blades, 0)
   end
+
+  test "correctly parses blade price" do
+    {:ok, html} = File.read("fixture/adidas_blade.html")
+    assert Parser.parse_blade_details_page(html) == 190
+  end
 end

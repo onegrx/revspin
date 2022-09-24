@@ -4,12 +4,18 @@ defmodule Parser do
 
     brands = Floki.find(document, ".dbcat + div")
 
-    # IO.inspect("Brand count: #{Enum.count(brands)}")
+    res =
+      brands
+      |> Enum.map(&process_brand_node/1)
 
-    brands
-    |> Enum.map(&process_brand_node/1)
+    res
+  end
 
-    # |> Enum.slice(1..3)
+  def parse_blade_details_page(html) do
+    {:ok, document} = Floki.parse_document(html)
+    [{"span", _attributes, [price_string]}] = Floki.find(document, "#actual_price")
+    {price, ""} = Float.parse(price_string)
+    price
   end
 
   defp process_brand_node({"div", attributes, children_nodes}) do
