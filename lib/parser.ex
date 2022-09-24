@@ -8,6 +8,7 @@ defmodule Parser do
 
     brands
     |> Enum.map(&process_brand_node/1)
+
     # |> Enum.slice(1..3)
   end
 

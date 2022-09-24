@@ -9,6 +9,7 @@ defmodule Revspin.Application do
     children = [
       # Starts a worker by calling: Revspin.Worker.start_link(arg)
       # {Revspin.Worker, arg}
+      Revspin.Repo
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

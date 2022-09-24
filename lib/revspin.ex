@@ -6,5 +6,8 @@ defmodule Revspin do
   def start do
     html = Client.get_blades_page()
     Parser.parse_blades_page(html)
+
+    brand = %Brand{name: "adidas"}
+    Revspin.Repo.insert(brand)
   end
 end
