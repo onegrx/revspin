@@ -13,9 +13,31 @@ defmodule Parser do
 
   def parse_blade_details_page(html) do
     {:ok, document} = Floki.parse_document(html)
-    [{"span", _attributes, [price_string]}] = Floki.find(document, "#actual_price")
-    {price, ""} = Float.parse(price_string)
-    price
+
+    # price
+    [{"span", _attrs, [price_string]}] = Floki.find(document, "#actual_price")
+    price = string_to_number(price_string)
+
+    # overall
+    [{"span", _attrs, [{"span", _attrs2, [overall_string]}]}] =
+      Floki.find(document, "span.rating")
+
+    overall = string_to_number(overall_string)
+
+    # properties
+    properties = ~w(speed control stiffness hardness consistency)a
+
+    document
+    |> Floki.find("#UserRatingsTable td.cell_rating")
+    |> Enum.take(length(properties))
+    |> Enum.map(fn td ->
+      {"td", _attrs, [val | _]} = td
+      string_to_number(val)
+    end)
+    |> Enum.zip(properties)
+    |> Enum.map(fn {val, prop} -> {prop, val} end)
+    |> Keyword.put(:price, price)
+    |> Keyword.put(:overall, overall)
   end
 
   defp process_brand_node({"div", attributes, children_nodes}) do
@@ -28,10 +50,7 @@ defmodule Parser do
       |> Enum.drop(1)
       |> Enum.map(&get_blade_name_link/1)
 
-    %{
-      brand: brand_name,
-      blades: blades
-    }
+    %{brand: brand_name, blades: blades}
   end
 
   defp extract_brand_name("brand-" <> brand_name), do: brand_name
@@ -41,9 +60,16 @@ defmodule Parser do
     {"href", link} = List.keyfind(attributes, "href", 0)
     [_span, blade_name] = children
 
-    %{
-      name: String.trim(blade_name),
-      link: link
-    }
+    %{name: String.trim(blade_name), link: link}
+  end
+
+  defp string_to_number(string) do
+    string
+    |> String.trim()
+    |> Float.parse()
+    |> case do
+      {float, ""} -> float
+      _ -> nil
+    end
   end
 end

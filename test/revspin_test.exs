@@ -32,6 +32,15 @@ defmodule RevspinTest do
 
   test "correctly parses blade price" do
     {:ok, html} = File.read("fixture/adidas_blade.html")
-    assert Parser.parse_blade_details_page(html) == 190
+
+    assert [
+             overall: 8.8,
+             price: 190.0,
+             speed: 8.8,
+             control: 8.9,
+             stiffness: 3.6,
+             hardness: 4.3,
+             consistency: 9.5
+           ] == Parser.parse_blade_details_page(html)
   end
 end

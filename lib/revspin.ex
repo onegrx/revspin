@@ -35,8 +35,9 @@ defmodule Revspin do
   defp process_blade(%{link: link, name: blade_name} = blade) do
     case Client.get_blades_details(link) do
       {:ok, blade_html} ->
-        price = Parser.parse_blade_details_page(blade_html)
-        IO.puts("  * BLADE: #{blade_name} - price: #{price}")
+        Parser.parse_blade_details_page(blade_html) |> IO.inspect()
+
+        # IO.puts("  * BLADE: #{blade_name} - price: #{price}")
         Process.sleep(1000 + :rand.uniform(500))
 
       _ ->
