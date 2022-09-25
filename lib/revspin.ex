@@ -7,23 +7,24 @@ defmodule Revspin do
     html = Client.get_brands_blades_page()
 
     brand_entities =
-      Parser.parse_blades_page(html)
+      Parser.parse_brands_blades_page(html)
       # ! For development
       |> Enum.slice(0..3)
-      # |> Enum.slice(1..6)
-      # |> Enum.at(2)
-      |> Enum.each(&process_blades_from_brand/1)
 
-    # brand = %Brand{name: "adidas"}
-    # Revspin.Repo.insert(brand)
+    :ok =
+      brand_entities
+      |> Enum.map(& &1.brand)
+      |> Enum.map(fn brand_name -> %Brand{name: brand_name} end)
+      |> Enum.each(&Revspin.Repo.insert/1)
+
+    IO.puts("Waiting...")
+    Process.sleep(2500)
+
+    brand_entities
+    |> Enum.each(&process_blades_from_brand/1)
   end
 
-  defp process_blades_from_brand(brand_entity) do
-    %{
-      blades: blades,
-      brand: brand_name
-    } = brand_entity
-
+  defp process_blades_from_brand(%{blades: blades, brand: brand_name}) do
     IO.puts("Brand name: #{brand_name}")
 
     blades
@@ -32,16 +33,15 @@ defmodule Revspin do
     |> Enum.each(fn blade -> process_blade(blade) end)
   end
 
-  defp process_blade(%{link: link, name: blade_name} = blade) do
+  defp process_blade(%{link: link, name: blade_name}) do
     case Client.get_blades_details(link) do
       {:ok, blade_html} ->
-        Parser.parse_blade_details_page(blade_html) |> IO.inspect()
-
-        # IO.puts("  * BLADE: #{blade_name} - price: #{price}")
+        attrs = Parser.parse_blade_details_page(blade_html)
+        IO.puts(" * BLADE: #{blade_name} - attrs: #{inspect(attrs)}")
         Process.sleep(1000 + :rand.uniform(500))
 
       _ ->
-        IO.puts("  * BLADE: #{blade_name} - 404 SKIP")
+        IO.puts(" * BLADE: #{blade_name} - 404 SKIP")
     end
   end
 end

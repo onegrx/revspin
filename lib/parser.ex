@@ -1,40 +1,34 @@
 defmodule Parser do
-  def parse_blades_page(html) do
+  @moduledoc "HTML parser for extracting brands and blades data from RevSpin"
+
+  @blade_properties ~w(speed control stiffness hardness consistency)a
+
+  def parse_brands_blades_page(html) do
     {:ok, document} = Floki.parse_document(html)
 
-    brands = Floki.find(document, ".dbcat + div")
-
-    res =
-      brands
-      |> Enum.map(&process_brand_node/1)
-
-    res
+    document
+    |> Floki.find(".dbcat + div")
+    |> Enum.map(&process_brand_node/1)
   end
 
   def parse_blade_details_page(html) do
     {:ok, document} = Floki.parse_document(html)
 
-    # price
-    [{"span", _attrs, [price_string]}] = Floki.find(document, "#actual_price")
+    [{"span", _, [price_string]}] = Floki.find(document, "#actual_price")
     price = string_to_number(price_string)
 
-    # overall
-    [{"span", _attrs, [{"span", _attrs2, [overall_string]}]}] =
-      Floki.find(document, "span.rating")
+    [{"span", _, [{"span", _, [overall_string]}]}] = Floki.find(document, "span.rating")
 
     overall = string_to_number(overall_string)
 
-    # properties
-    properties = ~w(speed control stiffness hardness consistency)a
-
     document
     |> Floki.find("#UserRatingsTable td.cell_rating")
-    |> Enum.take(length(properties))
+    |> Enum.take(length(@blade_properties))
     |> Enum.map(fn td ->
       {"td", _attrs, [val | _]} = td
       string_to_number(val)
     end)
-    |> Enum.zip(properties)
+    |> Enum.zip(@blade_properties)
     |> Enum.map(fn {val, prop} -> {prop, val} end)
     |> Keyword.put(:price, price)
     |> Keyword.put(:overall, overall)
