@@ -9,5 +9,9 @@ config :revspin, Revspin.Repo,
   password: "postgres",
   hostname: "localhost"
 
+config :revspin, Revspin.Processor,
+  const_sleep_time: 200,
+  random_sleep_time: 100
+
 config :logger,
   level: :info

@@ -13,6 +13,7 @@ defmodule Revspin.Processor do
 
     html
     |> Parser.parse_brands_blades_page()
+    # Comment the next line for real use
     |> Enum.take(4)
     |> Enum.each(&process_brand_with_blades/1)
   end
@@ -24,6 +25,7 @@ defmodule Revspin.Processor do
     {:ok, inserted_brand} = Repo.insert(brand)
 
     blades
+    # Comment the next line for real use
     |> Enum.take(4)
     |> Enum.each(fn blade -> process_blade(blade, inserted_brand) end)
   end
@@ -42,7 +44,12 @@ defmodule Revspin.Processor do
         |> Ecto.build_assoc(:blades, attrs)
         |> Repo.insert()
 
-        Process.sleep(1000 + :rand.uniform(500))
+        sleep_config = Application.get_env(:revspin, __MODULE__)
+
+        sleep_time =
+          sleep_config[:const_sleep_time] + :rand.uniform(sleep_config[:random_sleep_time])
+
+        Process.sleep(sleep_time)
 
       _ ->
         Logger.warn("Unable to load page for blade: #{blade_name} - skipping")
