@@ -7,7 +7,8 @@ defmodule Revspin.MixProject do
       version: "0.1.0",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      aliases: aliases()
     ]
   end
 
@@ -19,6 +20,12 @@ defmodule Revspin.MixProject do
     ]
   end
 
+  defp aliases do
+    [
+      "ecto.reset": ["ecto.drop", "ecto.create", "ecto.migrate"]
+    ]
+  end
+
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
@@ -27,7 +34,7 @@ defmodule Revspin.MixProject do
       {:ecto_sql, "~> 3.0"},
       {:floki, "~> 0.33.0"},
       {:httpoison, "~> 1.8"},
-      {:postgrex, ">= 0.0.0"}
+      {:postgrex, "~> 0.16.5"}
     ]
   end
 end

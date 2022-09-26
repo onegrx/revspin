@@ -4,6 +4,8 @@ defmodule Revspin.Repo.Migrations.CreateBrands do
   def change do
     create table(:brands) do
       add :name, :string
+      
+      timestamps()
     end
   end
 end
