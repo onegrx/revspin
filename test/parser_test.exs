@@ -1,7 +1,9 @@
-defmodule RevspinTest do
+defmodule ParserTest do
   use ExUnit.Case
 
-  @expected_nr_of_blades 105
+  alias Revspin.Parser
+
+  @expected_nr_of_brands 105
 
   setup_all do
     {:ok, html} = File.read("test/fixture/brands_and_blades.html")
@@ -9,8 +11,8 @@ defmodule RevspinTest do
   end
 
   describe "Parser" do
-    test "gets right number of blades", %{html: html} do
-      assert @expected_nr_of_blades ==
+    test "gets right number of brands", %{html: html} do
+      assert @expected_nr_of_brands ==
                html
                |> Parser.parse_brands_blades_page()
                |> Enum.count()

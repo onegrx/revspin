@@ -1,4 +1,4 @@
-defmodule Client do
+defmodule Revspin.Client do
   @moduledoc "HTTP client implementation to access blades data from RevSpin website"
 
   @spec get_brands_blades_page() :: String.t()

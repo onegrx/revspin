@@ -1,18 +1,9 @@
-defmodule Blade do
+defmodule Revspin.Model.Blade do
   @moduledoc "Schema representing a tennis blade"
 
-  use Ecto.Schema
+  alias Revspin.Model.Brand
 
-  @fields ~w(
-    name
-    overall
-    price
-    speed
-    control
-    stiffness
-    hardness
-    consistency
-  )a
+  use Ecto.Schema
 
   schema "blades" do
     field :name, :string

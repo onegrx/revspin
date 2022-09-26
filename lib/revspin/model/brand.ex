@@ -1,5 +1,7 @@
-defmodule Brand do
+defmodule Revspin.Model.Brand do
   @moduledoc "Schema representing brand of the tennis blade"
+
+  alias Revspin.Model.Blade
 
   use Ecto.Schema
 

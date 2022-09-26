@@ -1,8 +1,9 @@
-defmodule Parser do
+defmodule Revspin.Parser do
   @moduledoc "HTML parser for extracting brands and blades data from RevSpin"
 
   @blade_properties ~w(speed control stiffness hardness consistency)a
 
+  @spec parse_brands_blades_page(String.t()) :: [map()]
   def parse_brands_blades_page(html) do
     {:ok, document} = Floki.parse_document(html)
 
@@ -11,6 +12,7 @@ defmodule Parser do
     |> Enum.map(&process_brand_node/1)
   end
 
+  @spec parse_blade_details_page(String.t()) :: [{atom(), float() | nil}]
   def parse_blade_details_page(html) do
     {:ok, document} = Floki.parse_document(html)
 
