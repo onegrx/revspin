@@ -8,3 +8,6 @@ config :revspin, Revspin.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost"
+
+config :logger,
+  level: :info
