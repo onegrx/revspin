@@ -1,16 +1,16 @@
 defmodule RevspinTest do
   use ExUnit.Case
 
+  @expected_nr_of_blades 105
+
   setup_all do
-    {:ok, html} = File.read("fixture/brands_and_blades.html")
+    {:ok, html} = File.read("test/fixture/brands_and_blades.html")
     {:ok, html: html}
   end
 
   describe "Parser" do
     test "gets right number of blades", %{html: html} do
-      n = 105
-
-      assert n ==
+      assert @expected_nr_of_blades ==
                html
                |> Parser.parse_brands_blades_page()
                |> Enum.count()
@@ -31,7 +31,7 @@ defmodule RevspinTest do
     end
 
     test "correctly parses blade properties" do
-      {:ok, html} = File.read("fixture/adidas_blade_with_ratings.html")
+      {:ok, html} = File.read("test/fixture/adidas_blade_with_ratings.html")
 
       assert [
                overall: 8.8,
@@ -45,7 +45,7 @@ defmodule RevspinTest do
     end
 
     test "doesn't fail on blades without ratings" do
-      {:ok, html} = File.read("fixture/adidas_blade_without_ratings.html")
+      {:ok, html} = File.read("test/fixture/adidas_blade_without_ratings.html")
 
       assert [
                overall: nil,
