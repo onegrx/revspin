@@ -1,15 +1,17 @@
 defmodule Revspin.Processor do
   @moduledoc "Module responsible for processing brands and blades"
 
-  alias Revspin.Client
+  alias Revspin.APIClient
   alias Revspin.Model.Brand
   alias Revspin.Parser
   alias Revspin.Repo
 
   require Logger
 
+  @api_client Application.compile_env(:revspin, [__MODULE__, :api_client], APIClient)
+
   def process do
-    html = Client.get_brands_blades_page()
+    html = @api_client.get_brands_blades_page()
 
     html
     |> Parser.parse_brands_blades_page()
@@ -28,11 +30,11 @@ defmodule Revspin.Processor do
     # Comment the next line for real use
     |> Enum.take(20)
     |> Task.async_stream(fn blade -> process_blade(blade, inserted_brand) end)
-    |> Enum.to_list
+    |> Enum.to_list()
   end
 
   defp process_blade(%{link: link, name: blade_name}, inserted_brand) do
-    case Client.get_blades_details(link) do
+    case @api_client.get_blades_details(link) do
       {:ok, blade_html} ->
         attrs =
           blade_html
@@ -46,9 +48,7 @@ defmodule Revspin.Processor do
         |> Repo.insert()
 
         sleep_config = Application.get_env(:revspin, __MODULE__)
-
-        sleep_time =
-          sleep_config[:const_sleep_time] + :rand.uniform(sleep_config[:random_sleep_time])
+        sleep_time = sleep_config[:const_sleep_time] + rand(sleep_config[:random_sleep_time])
 
         Process.sleep(sleep_time)
 
@@ -56,4 +56,7 @@ defmodule Revspin.Processor do
         Logger.warn("Unable to load page for blade: #{blade_name} - skipping")
     end
   end
+
+  defp rand(0), do: 0
+  defp rand(n), do: :rand.uniform(n)
 end

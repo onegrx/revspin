@@ -21,17 +21,19 @@ defmodule Revspin.MixProject do
 
   defp aliases do
     [
-      "ecto.reset": ["ecto.drop", "ecto.create", "ecto.migrate"]
+      "ecto.reset": ["ecto.drop", "ecto.create", "ecto.migrate"],
+      test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
 
   defp deps do
     [
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+      {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:ecto_sql, "~> 3.0"},
       {:floki, "~> 0.33.0"},
       {:httpoison, "~> 1.8"},
+      {:mox, "~> 1.0", only: :test},
       {:postgrex, "~> 0.16.5"}
     ]
   end

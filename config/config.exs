@@ -15,3 +15,5 @@ config :revspin, Revspin.Processor,
 
 config :logger,
   level: :info
+
+import_config("#{Mix.env()}.exs")
