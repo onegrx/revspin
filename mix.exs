@@ -8,7 +8,8 @@ defmodule Revspin.MixProject do
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      aliases: aliases()
+      aliases: aliases(),
+      elixirc_paths: elixirc_paths(Mix.env())
     ]
   end
 
@@ -18,6 +19,9 @@ defmodule Revspin.MixProject do
       mod: {Revspin.Application, []}
     ]
   end
+
+  defp elixirc_paths(:test), do: ["test/support", "lib"]
+  defp elixirc_paths(_), do: ["lib"]
 
   defp aliases do
     [
