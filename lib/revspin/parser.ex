@@ -16,22 +16,26 @@ defmodule Revspin.Parser do
   def parse_blade_details_page(html) do
     {:ok, document} = Floki.parse_document(html)
 
-    [{"span", _, [price_string]}] = Floki.find(document, "#actual_price")
-    price = string_to_number(price_string)
+    price =
+      document
+      |> Floki.find("#actual_price")
+      |> Floki.text()
+      |> string_to_number()
 
-    [{"span", _, [{"span", _, [overall_string]}]}] = Floki.find(document, "span.rating")
+    overall =
+      document
+      |> Floki.find("span.rating")
+      |> Floki.text()
+      |> string_to_number()
 
-    overall = string_to_number(overall_string)
+    attrs =
+      document
+      |> Floki.find("#UserRatingsTable td.cell_rating")
+      |> Enum.take(length(@blade_properties))
+      |> Enum.map(fn {"td", _attrs, [val | _]} -> string_to_number(val) end)
 
-    document
-    |> Floki.find("#UserRatingsTable td.cell_rating")
-    |> Enum.take(length(@blade_properties))
-    |> Enum.map(fn td ->
-      {"td", _attrs, [val | _]} = td
-      string_to_number(val)
-    end)
-    |> Enum.zip(@blade_properties)
-    |> Enum.map(fn {val, prop} -> {prop, val} end)
+    @blade_properties
+    |> Enum.zip(attrs)
     |> Keyword.put(:price, price)
     |> Keyword.put(:overall, overall)
   end
