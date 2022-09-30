@@ -11,7 +11,7 @@ defmodule Revspin.Processor do
   @api_client Application.compile_env(:revspin, [__MODULE__, :api_client], APIClient)
 
   def process do
-    html = @api_client.get_brands_blades_page()
+    {:ok, html} = @api_client.get_brands_blades_page()
 
     html
     |> Parser.parse_brands_blades_page()
@@ -52,7 +52,7 @@ defmodule Revspin.Processor do
 
         Process.sleep(sleep_time)
 
-      _ ->
+      {:error, _} ->
         Logger.warn("Unable to load page for blade: #{blade_name} - skipping")
     end
   end

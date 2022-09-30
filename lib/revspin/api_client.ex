@@ -3,18 +3,22 @@ defmodule Revspin.APIClient do
 
   @behaviour Revspin.API
 
-  @spec get_brands_blades_page() :: String.t()
+  @spec get_brands_blades_page() :: Revspin.API.response()
   def get_brands_blades_page do
-    %HTTPoison.Response{body: body} = HTTPoison.get!("https://revspin.net/blade/")
-    body
+    case HTTPoison.get("https://revspin.net/blade/") do
+      {:ok, %HTTPoison.Response{body: body, status_code: 200}} -> {:ok, body}
+      {:ok, %HTTPoison.Response{status_code: 404}} -> {:error, :not_found}
+      {:ok, _} -> {:error, :unexpected_response}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
-  @spec get_blades_details(String.t()) ::
-          {:ok, String.t()} | {:error, :not_found} | {:error, any()}
+  @spec get_blades_details(String.t()) :: Revspin.API.response()
   def get_blades_details(link) do
     case HTTPoison.get("https://revspin.net/" <> link) do
       {:ok, %HTTPoison.Response{body: body, status_code: 200}} -> {:ok, body}
       {:ok, %HTTPoison.Response{status_code: 404}} -> {:error, :not_found}
+      {:ok, _} -> {:error, :unexpected_response}
       {:error, reason} -> {:error, reason}
     end
   end

@@ -14,7 +14,7 @@ defmodule ProcessorTest do
   describe "Processor" do
     test "processes" do
       expect(APIMock, :get_brands_blades_page, fn ->
-        File.read!("test/fixture/brands_and_blades.html")
+        {:ok, File.read!("test/fixture/brands_and_blades.html")}
       end)
 
       stub(APIMock, :get_blades_details, fn _ ->
