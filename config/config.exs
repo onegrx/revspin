@@ -10,8 +10,9 @@ config :revspin, Revspin.Repo,
   hostname: "localhost"
 
 config :revspin, Revspin.Processor,
-  const_sleep_time: 200,
-  random_sleep_time: 100
+  const_sleep_time: 2000,
+  random_sleep_time: 1000,
+  concurrency: 6
 
 config :logger,
   level: :info
